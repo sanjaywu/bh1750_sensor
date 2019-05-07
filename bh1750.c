@@ -23,7 +23,7 @@
 #include "bh1750.h"
 
 
-#ifdef PKG_USING_BH1750_V200
+#ifdef PKG_USING_BH1750_LATEST_VERSION
 
 
 static rt_err_t bh1750_read_regs(struct rt_i2c_bus_device *bus, rt_uint8_t len, rt_uint8_t *buf)
@@ -118,5 +118,5 @@ float bh1750_read_light(bh1750_device_t hdev)
 
 
 
-#endif /* PKG_USING_BH1750_V200 */
+#endif /* PKG_USING_BH1750_LATEST_VERSION */
 
