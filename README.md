@@ -167,7 +167,6 @@ RT-Thread online packages --->
 - `Enable average filter by software`：开启采集光照强度软件平均数滤波器功能；
 - `The number of averaging`：取平均数的采样数目；
 - `Peroid of sampling data(unit ms)`：采集数据的周期，时间单位 `ms`；
-- `Version`：配置软件包版本，默认最新版本。
 
 然后让 RT-Thread 的包管理器自动更新，或者使用 `pkgs --update` 命令更新包到 BSP 中。
 
