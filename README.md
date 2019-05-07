@@ -2,7 +2,7 @@
 
 ## 1 介绍
 
-`BH1750FVI` 传感器软件包提供了使用光照强度传感器 `BH1750FVI` 基本功能，BH1750FVI 是一种用于两线式串行总线接口的数字型光强度传感器集成电路。这种集成电路可以根据收集的光线强度数据来调整液晶或者键盘背景灯的亮度。利用它的高分辨率可以探测较大范围的光强度变化。（1lx-65535lx）。本文介绍该软件包的基本功能，以及 `Finsh/MSH` 测试命令等，这里我做了两个版本的软件包，旧版本和`AHT10`温湿度传感器类似，新版是基于`sensor`框架。
+`BH1750FVI` 传感器软件包提供了使用光照强度传感器 `BH1750FVI` 基本功能，BH1750FVI 是一种用于两线式串行总线接口的数字型光强度传感器集成电路。这种集成电路可以根据收集的光线强度数据来调整液晶或者键盘背景灯的亮度。利用它的高分辨率可以探测较大范围的光强度变化。（1lx-65535lx）。本文介绍该软件包的基本功能，以及 `Finsh/MSH` 测试命令等，这里我做了两个版本的软件包，旧版本和`AHT10`温湿度传感器类似，新版是基于`sensor`框架，目前最新版本（latest）的是基于`sensor`框架的。
 
 基本功能主要由传感器 `BH1750FVI` 决定：在输入电压为 `2.4v-3.6v` 范围内，测量光照强度的量程如下表所示：
 
@@ -36,7 +36,7 @@ BH1750FVI 传感器软件包遵循  Apache-2.0 许可，详见 LICENSE 文件。
 
 依赖 `RT-Thread I2C` 设备驱动框架。
 
-## 2 获取基于sensor框架的软件包
+## 2 获取框架的软件包
 
 使用 `BH1750FVI` 软件包需要在 RT-Thread 的包管理器中选择它，具体路径如下：
 
@@ -45,20 +45,21 @@ RT-Thread online packages --->
     peripheral libraries and drivers --->
         sensors drivers --->
               [*]   bh1750 sensor driver package, support: ambient light.  --->
-                   	Version (latest)  --->
+                   	Version (v2.0.0)  --->
 ```
 
 
 每个功能的配置说明如下：
 
 - `bh1750 sensor driver package, support: ambient light`：选择使用 `BH1750FVI` 传感器软件包；
-- `Version`：配置软件包版本，默认最新版本。
+- `Version`：配置软件包版本，默认最v2.0.0版本；
+- 版本说明：`v1.0.0`版本时旧版本（非sensor框架）、`v2.0.0`和`latest`是新版本（基于sensor框架）。
 
 然后让 RT-Thread 的包管理器自动更新，或者使用 `pkgs --update` 命令更新包到 BSP 中。
 
-## 3 使用 基于sensor框架的BH1750FVI 软件包
+## 3 使用基于sensor框架的BH1750FVI 软件包
 
-按照前文介绍，获取 `BH1750FVI` 软件包后，就可以按照 下文提供的 API 使用传感器 `bh1750` 与 `Finsh/MSH` 命令进行测试，详细内容如下。
+按照前文介绍，如果你获取的是`v2.0.0`和`latest`版本，使用的是sensor框架，在获取 `BH1750FVI` 软件包后，就可以按照下文提供的 API 使用传感器 `bh1750` 与 `Finsh/MSH` 命令进行测试，详细内容如下。
 
 ### 3.1 API
 
@@ -101,7 +102,7 @@ INIT_APP_EXPORT(bh1750_port);
  2006 - 2019 Copyright by rt-thread team
 [I/sensor] rt_sensor init success
 [I/sensor.rohm.bh1750] light sensor init success
-msh >s
+msh >
 ```
 
 
@@ -147,32 +148,31 @@ msh >
 
 ## 4 获取旧版本软件包
 
-使用 `BH1750FVI` 软件包需要在 RT-Thread 的包管理器中选择它，具体路径如下：
+如果你选择的是`v1.0.0`版本，是旧版本软件，没有使用新的sensor框架，这个版本有采集光照强度软件平均数滤波器功能，选择路径如下：
 
 ```
-RT-Thread online packages
-    peripheral libraries and drivers  --->
-        [*] BH1750FVI: Ambient Light Sensor IC BH1750FVI driver library  --->
+RT-Thread online packages --->
+    peripheral libraries and drivers --->
+        sensors drivers --->
+              [*]   bh1750 sensor driver package, support: ambient light.  --->
+                   	Version (v1.0.0)  --->
         [*] Enable average filter by software                                    
         (10) The number of averaging
-        (1000) Peroid of sampling data(unit ms)                                               
-               Version (latest)  --->
+        (1000) Peroid of sampling data(unit ms) 
 ```
 
 
 每个功能的配置说明如下：
 
-- `BH1750FVI: Ambient Light Sensor IC BH1750FVI driver library`：选择使用 `BH1750FVI` 软件包；
 - `Enable average filter by software`：开启采集光照强度软件平均数滤波器功能；
 - `The number of averaging`：取平均数的采样数目；
 - `Peroid of sampling data(unit ms)`：采集数据的周期，时间单位 `ms`；
-- `Version`：配置软件包版本，默认最新版本。
 
 然后让 RT-Thread 的包管理器自动更新，或者使用 `pkgs --update` 命令更新包到 BSP 中。
 
-## 5 使用 旧版本BH1750FVI 软件包
+## 5 使用旧版本BH1750FVI软件包
 
-按照前文介绍，获取 `BH1750FVI` 软件包后，就可以按照 下文提供的 API 使用传感器 `bh1750` 与 `Finsh/MSH` 命令进行测试，详细内容如下。
+按照前文介绍，获取旧版本的 `BH1750FVI` 软件包后，就可以按照 下文提供的 API 使用传感器 `bh1750` 与 `Finsh/MSH` 命令进行测试，详细内容如下。
 
 ### 5.1 API
 
@@ -250,7 +250,7 @@ msh />
 
 ## 6 注意事项
 
-**如果使用基于sensor框架的软件包**，在执行`sensor read`之后没有任何打印出光照强度数据，打开\components\drivers\sensors\sensor_cmd.c,在`sensor_show_data`函数后面自行增加环境光照强度打印代码：
+**如果使用基于sensor框架的软件包（`v2.0.0`、`latest`）**，在执行`sensor read`之后没有任何打印出光照强度数据，打开\components\drivers\sensors\sensor_cmd.c,在`sensor_show_data`函数后面自行增加环境光照强度打印代码：
 ```
 case RT_SENSOR_CLASS_LIGHT:
         LOG_I("num:%3d, light:%4d.%d, timestamp:%5d", num, sensor_data->data.light / 10, sensor_data->data.light % 10, sensor_data->timestamp);
@@ -260,9 +260,7 @@ case RT_SENSOR_CLASS_LIGHT:
 ## 7 联系方式
 
 * 维护：[Sanjay_Wu](https://github.com/sanjaywu)
-* 主页：
-* 1、新版本基于sensor框架：[https://github.com/sanjaywu/BH1750FVI](https://github.com/sanjaywu/BH1750FVI "https://github.com/sanjaywu/BH1750FVI")
-* 2、旧版本：[https://github.com/sanjaywu/bh1750](https://github.com/sanjaywu/bh1750 "https://github.com/sanjaywu/bh1750")
+* 主页：[https://github.com/sanjaywu/bh1750_sensor](https://github.com/sanjaywu/bh1750_sensor "https://github.com/sanjaywu/bh1750_sensor")
 * 邮箱：sanjaywu@yeah.net
 
 
