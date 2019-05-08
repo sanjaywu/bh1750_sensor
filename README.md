@@ -45,14 +45,14 @@ RT-Thread online packages --->
     peripheral libraries and drivers --->
         sensors drivers --->
               [*]   bh1750 sensor driver package, support: ambient light.  --->
-                   	Version (v2.0.0)  --->
+                   	Version (latest)  --->
 ```
 
 
 每个功能的配置说明如下：
 
 - `bh1750 sensor driver package, support: ambient light`：选择使用 `BH1750FVI` 传感器软件包；
-- `Version`：配置软件包版本，默认最v2.0.0版本；
+- `Version`：配置软件包版本，默认最latest版本；
 - 版本说明：`v1.0.0`版本时旧版本（非sensor框架）、`v2.0.0`和`latest`是新版本（基于sensor框架）。
 
 然后让 RT-Thread 的包管理器自动更新，或者使用 `pkgs --update` 命令更新包到 BSP 中。
@@ -250,7 +250,7 @@ msh />
 
 ## 6 注意事项
 
-**如果使用基于sensor框架的软件包（`v2.0.0`、`latest`）**，在执行`sensor read`之后没有任何打印出光照强度数据，打开\components\drivers\sensors\sensor_cmd.c,在`sensor_show_data`函数后面自行增加环境光照强度打印代码：
+**如果使用基于sensor框架的软件包（`v2.0.0`、`latest`版本）**，在执行`sensor read`之后没有任何打印出光照强度数据，打开\components\drivers\sensors\sensor_cmd.c,在`sensor_show_data`函数后面自行增加环境光照强度打印代码：
 ```
 case RT_SENSOR_CLASS_LIGHT:
         LOG_I("num:%3d, light:%4d.%d, timestamp:%5d", num, sensor_data->data.light / 10, sensor_data->data.light % 10, sensor_data->timestamp);
