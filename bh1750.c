@@ -12,16 +12,12 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#include <string.h>
-
 #define DBG_ENABLE
 #define DBG_SECTION_NAME "bh1750"
 #define DBG_LEVEL DBG_LOG
 #define DBG_COLOR
 #include <rtdbg.h>
-
 #include "bh1750.h"
-
 
 #ifdef PKG_USING_BH1750_V100
 
@@ -39,7 +35,6 @@
 #define BH1750_ONE_H_RES_MODE2	0x21	// One Time H-Resolution Mode2
 #define BH1750_ONE_L_RES_MODE	0x23	// One Time L-Resolution Mode
 
-
 static rt_err_t bh1750_read_regs(struct rt_i2c_bus_device *bus, rt_uint8_t len, rt_uint8_t *buf)
 {
     struct rt_i2c_msg msgs;
@@ -49,7 +44,7 @@ static rt_err_t bh1750_read_regs(struct rt_i2c_bus_device *bus, rt_uint8_t len, 
     msgs.buf = buf;
     msgs.len = len;
 
-    if (rt_i2c_transfer(bus, &msgs, 1) == 1)
+    if (1 == rt_i2c_transfer(bus, &msgs, 1))
     {
         return RT_EOK;
     }
@@ -68,10 +63,14 @@ static rt_err_t bh1750_write_cmd(struct rt_i2c_bus_device *bus, rt_uint8_t cmd)
     msgs.buf = &cmd;
     msgs.len = 1;
 
-    if (rt_i2c_transfer(bus, &msgs, 1) == 1)
+    if (1 == rt_i2c_transfer(bus, &msgs, 1))
+    {
         return RT_EOK;
+    }
     else
+    {
         return -RT_ERROR;
+    }
 }
 
 static rt_err_t bh1750_start(bh1750_device_t dev)
@@ -79,39 +78,39 @@ static rt_err_t bh1750_start(bh1750_device_t dev)
     RT_ASSERT(dev);
 
     bh1750_write_cmd(dev->i2c, BH1750_POWER_ON);
-	bh1750_write_cmd(dev->i2c, BH1750_RESET);
-	bh1750_write_cmd(dev->i2c, BH1750_CON_H_RES_MODE2);	// Start measurement at 0.5lx resolution. Measurement Time is typically 120ms
-	
+    bh1750_write_cmd(dev->i2c, BH1750_RESET);
+    bh1750_write_cmd(dev->i2c, BH1750_CON_H_RES_MODE2);	// Start measurement at 0.5lx resolution. Measurement Time is typically 120ms
+
     return RT_EOK;
 }
 
 static float read_hw_light(bh1750_device_t dev)
 {
-    rt_uint8_t temp[2];
-    float current_light = 0.0; // The data is error with missing measurement. 
-    rt_err_t result;
+    rt_uint8_t temp[2] = {0, 0};
+    float current_light = 0.0;      // The data is error with missing measurement.
+    rt_err_t result = -RT_ERROR;
 
     RT_ASSERT(dev);
 
     result = rt_mutex_take(dev->lock, RT_WAITING_FOREVER);
-    if (result == RT_EOK)
+    if (RT_EOK == result)
     {
-		if (RT_EOK == bh1750_start(dev))
-		{
-			rt_thread_mdelay(150);
-			
-			bh1750_read_regs(dev->i2c, 2, temp);
-			current_light = (float)((temp[0] << 8) + temp[1]) / 1.2;	// Convert to reality
-		}
-		else
-		{
-			LOG_E("The bh1750 could not start. Please try again");
-		}
+        if (RT_EOK == bh1750_start(dev))
+        {
+            rt_thread_mdelay(150);
+            bh1750_read_regs(dev->i2c, 2, temp);
+            current_light = (float)((temp[0] << 8) + temp[1]) / 1.2;	// Convert to reality
+        }
+        else
+        {
+            LOG_E("The bh1750 could not start. Please try again");
+        }
     }
     else
     {
         LOG_E("The bh1750 could not respond relative humidity measurement at this time. Please try again");
     }
+
     rt_mutex_release(dev->lock);
 
     return current_light;
@@ -192,7 +191,6 @@ float bh1750_read_light(bh1750_device_t dev)
 {
 #ifdef BH1750_USING_SOFT_FILTER
     average_measurement(dev, &dev->light_filter);
-
     return dev->light_filter.average;
 #else
     return read_hw_light(dev);
@@ -213,7 +211,7 @@ bh1750_device_t bh1750_init(const char *i2c_bus_name)
     RT_ASSERT(i2c_bus_name);
 
     dev = rt_calloc(1, sizeof(struct bh1750_device));
-    if (dev == RT_NULL)
+    if (RT_NULL == dev)
     {
         LOG_E("Can't allocate memory for bh1750 device on '%s' ", i2c_bus_name);
         return RT_NULL;
@@ -237,7 +235,6 @@ bh1750_device_t bh1750_init(const char *i2c_bus_name)
 
 #ifdef BH1750_USING_SOFT_FILTER
     dev->period = BH1750_SAMPLE_PERIOD;
-
     dev->thread = rt_thread_create("bh1750", bh1750_filter_entry, (void *)dev, 1024, 15, 10);
     if (dev->thread != RT_NULL)
     {
@@ -280,12 +277,12 @@ void bh1750(int argc, char *argv[])
 
     if (argc > 1)
     {
-        if (!strcmp(argv[1], "probe"))
+        if (!rt_strcmp(argv[1], "probe"))
         {
             if (argc > 2)
             {
                 /* initialize the sensor when first probe */
-                if (!dev || strcmp(dev->i2c->parent.parent.name, argv[2]))
+                if (!dev || rt_strcmp(dev->i2c->parent.parent.name, argv[2]))
                 {
                     /* deinit the old device */
                     if (dev)
@@ -300,7 +297,7 @@ void bh1750(int argc, char *argv[])
                 rt_kprintf("bh1750 probe <dev_name>   - probe sensor by given name\n");
             }
         }
-        else if (!strcmp(argv[1], "read"))
+        else if (!rt_strcmp(argv[1], "read"))
         {
             if (dev)
             {
@@ -308,8 +305,13 @@ void bh1750(int argc, char *argv[])
 
                 /* read the sensor data */
                 light = bh1750_read_light(dev);
-                rt_kprintf("read bh1750 sensor intensity   : %d%d%d%d%d.%d lx\n", (int)(light * 10)/100000%10, (int)(light * 10)/10000%10, (int)(light * 10)/1000%10,  \
-																					(int)(light * 10)/100%10, (int)(light * 10)/10%10, (int)(light * 10)/1%10);
+                rt_kprintf("read bh1750 sensor intensity   : %d%d%d%d%d.%d lx\n", \
+                            (int)(light * 10)/100000%10, \
+                            (int)(light * 10)/10000%10, \
+                            (int)(light * 10)/1000%10,  \
+                            (int)(light * 10)/100%10, \
+                            (int)(light * 10)/10%10, \
+                            (int)(light * 10)/1%10);
             }
             else
             {

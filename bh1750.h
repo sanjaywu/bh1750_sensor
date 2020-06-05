@@ -14,9 +14,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <rthw.h>
-#include <rtdevice.h>
-
 #ifdef BH1750_USING_SOFT_FILTER
 typedef struct filter_data
 {
@@ -35,7 +32,6 @@ struct bh1750_device
 
 #ifdef BH1750_USING_SOFT_FILTER
     filter_data_t light_filter;
-
     rt_thread_t thread;
     rt_uint32_t period;
 #endif /* BH1750_USING_SOFT_FILTER */
@@ -43,7 +39,6 @@ struct bh1750_device
     rt_mutex_t lock;
 };
 typedef struct bh1750_device *bh1750_device_t;
-
 
 /**
  * This function reads light intensity by bh1750 sensor measurement
@@ -69,8 +64,6 @@ bh1750_device_t bh1750_init(const char *i2c_bus_name);
  * @param dev the pointer of device driver structure
  */
 void bh1750_deinit(bh1750_device_t dev);
-
-
 
 
 #endif /* __BH1750_H__ */
