@@ -14,9 +14,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <rthw.h>
-#include <rtdevice.h>
-
 /*bh1750 device address */
 #define BH1750_ADDR 0x23
 
@@ -31,20 +28,15 @@
 #define BH1750_ONE_H_RES_MODE2	0x21	// One Time H-Resolution Mode2
 #define BH1750_ONE_L_RES_MODE	0x23	// One Time L-Resolution Mode
 
-
 struct bh1750_device
 {	
     struct rt_i2c_bus_device *bus;
 };
-
-
 typedef struct bh1750_device *bh1750_device_t;
 
 rt_err_t bh1750_power_on(bh1750_device_t hdev);
 rt_err_t bh1750_power_down(bh1750_device_t hdev);
 rt_err_t bh1750_init(bh1750_device_t hdev, const char *i2c_bus_name);
 float bh1750_read_light(bh1750_device_t hdev);
-
-
 
 #endif /* __BH1750_H__ */

@@ -13,7 +13,6 @@
 
 #include <sensor.h>
 
-
 int rt_hw_bh1750_init(const char *name, struct rt_sensor_config *cfg);
 
 
